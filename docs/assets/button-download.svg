@@ -1,45 +1,46 @@
-<svg width="500" height="112" viewBox="0 0 500 112" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Download Fuso for Android">
+<svg width="620" height="116" viewBox="0 0 620 116" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Download Fuso for Android">
   <defs>
-    <linearGradient id="btn2" x1="0" y1="0" x2="0" y2="1">
+    <linearGradient id="btn3" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#C96A3F"/>
       <stop offset="1" stop-color="#A94F2C"/>
     </linearGradient>
-    <linearGradient id="sheen2" x1="0" y1="0" x2="1" y2="0">
+    <linearGradient id="sheen3" x1="0" y1="0" x2="1" y2="0">
       <stop offset="0" stop-color="#FFFFFF" stop-opacity="0"/>
       <stop offset="0.5" stop-color="#FFFFFF" stop-opacity="0.45"/>
       <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
     </linearGradient>
-    <filter id="shadow2" x="-20%" y="-30%" width="140%" height="170%">
+    <filter id="shadow3" x="-20%" y="-30%" width="140%" height="170%">
       <feDropShadow dx="0" dy="5" stdDeviation="7" flood-color="#000000" flood-opacity="0.45"/>
     </filter>
-    <clipPath id="pill"><rect x="6" y="6" width="488" height="100" rx="50"/></clipPath>
+    <clipPath id="pill3"><rect x="6" y="6" width="608" height="104" rx="52"/></clipPath>
     <style>
       .sweep { animation: sweep 4.2s cubic-bezier(.5,.1,.4,.9) infinite; }
       @keyframes sweep {
-        0% { transform: translateX(-220px) skewX(-18deg); }
-        42%, 100% { transform: translateX(660px) skewX(-18deg); }
+        0% { transform: translateX(-260px) skewX(-18deg); }
+        42%, 100% { transform: translateX(720px) skewX(-18deg); }
       }
       .glyph { animation: nudge 2.6s ease-in-out infinite; }
       @keyframes nudge { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(3px); } }
     </style>
   </defs>
 
-  <g filter="url(#shadow2)">
-    <rect x="6" y="6" width="488" height="100" rx="50" fill="url(#btn2)"/>
+  <g filter="url(#shadow3)">
+    <rect x="6" y="6" width="608" height="104" rx="52" fill="url(#btn3)"/>
   </g>
-  <rect x="7.5" y="7.5" width="485" height="97" rx="48.5" fill="none" stroke="#FFFFFF" stroke-opacity="0.25" stroke-width="1.5"/>
+  <rect x="7.5" y="7.5" width="605" height="101" rx="50.5" fill="none" stroke="#FFFFFF" stroke-opacity="0.25" stroke-width="1.5"/>
 
-  <g clip-path="url(#pill)">
-    <rect class="sweep" x="-60" y="-10" width="110" height="132" fill="url(#sheen2)" opacity="0.5"/>
+  <g clip-path="url(#pill3)">
+    <rect class="sweep" x="-70" y="-10" width="110" height="136" fill="url(#sheen3)" opacity="0.5"/>
   </g>
 
   <!-- download glyph -->
   <g class="glyph">
-    <circle cx="66" cy="56" r="25" fill="none" stroke="#FFFFFF" stroke-opacity="0.9" stroke-width="3.5"/>
-    <line x1="66" y1="43" x2="66" y2="64" stroke="#FFFFFF" stroke-width="4.5" stroke-linecap="round"/>
-    <path d="M57 57 L66 67 L75 57" fill="none" stroke="#FFFFFF" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
-    <line x1="55" y1="72" x2="77" y2="72" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="74" cy="58" r="26" fill="none" stroke="#FFFFFF" stroke-opacity="0.9" stroke-width="3.5"/>
+    <line x1="74" y1="45" x2="74" y2="66" stroke="#FFFFFF" stroke-width="4.5" stroke-linecap="round"/>
+    <path d="M65 59 L74 69 L83 59" fill="none" stroke="#FFFFFF" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="63" y1="74" x2="85" y2="74" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"/>
   </g>
 
-  <text x="116" y="65" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="27" font-weight="800" letter-spacing="2.5" fill="#FFFFFF">DOWNLOAD FOR ANDROID</text>
+  <!-- guaranteed-fit label -->
+  <text x="124" y="67" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="25" font-weight="800" letter-spacing="1" fill="#FFFFFF" textLength="452" lengthAdjust="spacingAndGlyphs">DOWNLOAD FOR ANDROID</text>
 </svg>

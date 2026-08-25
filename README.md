@@ -67,8 +67,9 @@ appear. Your words never leave your device unless you say so.
 </tr>
 </table>
 
-Every pixel above is drawn from Fuso's real palette — warm paper, ink, terracotta.
-No stock screenshots. This *is* the app.
+These are hand-drawn vector mockups of Fuso's interface, rendered in its real
+Material 3 palette — warm paper, ink, terracotta. Not screenshots. Real device
+captures land here once the next build is packaged.
 
 ---
 

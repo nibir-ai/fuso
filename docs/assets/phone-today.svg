@@ -51,10 +51,16 @@
   <!-- quick add -->
   <rect x="24" y="344" width="312" height="46" rx="23" fill="#FFFFFF" stroke="#D1C5B4"/>
   <path d="M44 374 l3-8 12-12 5 5-12 12z" fill="none" stroke="#A94F2C" stroke-width="1.8" stroke-linejoin="round"/>
-  <text x="68" y="373" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="13" fill="#1D1B16">Lunch with dad <tspan fill="#8A4A2B">tomorrow</tspan> at <tspan fill="#8A6A00">1pm</tspan></text>
-  <rect x="163" y="358" width="63" height="19" rx="4" fill="#FFB697" fill-opacity="0.22"/>
-  <rect x="255" y="358" width="30" height="19" rx="4" fill="#F5BE48" fill-opacity="0.25"/>
-  <rect x="290" y="357" width="2" height="20" rx="1" fill="#A94F2C"/>
+  <!-- highlight boxes first, then words pinned to identical geometry -->
+  <rect x="152" y="359" width="58" height="18" rx="4" fill="#FFB697" fill-opacity="0.22"/>
+  <rect x="228" y="359" width="30" height="18" rx="4" fill="#F5BE48" fill-opacity="0.25"/>
+  <g font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="13" lengthAdjust="spacingAndGlyphs">
+    <text x="68"  y="373" fill="#1D1B16" textLength="80">Lunch with dad</text>
+    <text x="156" y="373" fill="#8A4A2B" textLength="50">tomorrow</text>
+    <text x="212" y="373" fill="#1D1B16" textLength="12">at</text>
+    <text x="232" y="373" fill="#8A6A00" textLength="22">1pm</text>
+  </g>
+  <rect x="260" y="358" width="2" height="20" rx="1" fill="#A94F2C"/>
 
   <!-- parsed chips -->
   <rect x="24" y="402" width="88" height="24" rx="12" fill="#FFDBCC"/>
