@@ -55,7 +55,7 @@
       </g>
       <g class="c3">
         <rect x="482" y="168" width="168" height="44" rx="22" fill="none" stroke="#6B6252" stroke-width="1.5"/>
-        <path d="M506 198l6 6 10-12" fill="none" stroke="#B8AD9C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M503 189l7 7 12-14" fill="none" stroke="#B8AD9C" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
         <text x="532" y="196" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="16" fill="#B8AD9C" textLength="104" lengthAdjust="spacingAndGlyphs">saved offline</text>
       </g>
 
