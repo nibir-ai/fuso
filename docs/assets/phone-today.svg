@@ -95,12 +95,31 @@
   <!-- bottom nav -->
   <line x1="18" y1="700" x2="342" y2="700" stroke="#EFE9DE"/>
   <g fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M40 722l10-9 10 9M44 719v13h5v-5h2v5h5v-13" stroke="#A94F2C"/>
-    <path d="M107 708h16v24h-12a4 4 0 01-4-4zM113 708v24" stroke="#7F7768"/>
-    <rect x="171" y="706" width="17" height="26" rx="3" stroke="#7F7768"/><line x1="175" y1="714" x2="184" y2="714" stroke="#7F7768"/><line x1="175" y1="720" x2="184" y2="720" stroke="#7F7768"/>
-    <rect x="235" y="708" width="17" height="17" rx="3" stroke="#7F7768"/><line x1="235" y1="714" x2="252" y2="714" stroke="#7F7768"/><line x1="240" y1="705" x2="240" y2="709" stroke="#7F7768"/><line x1="247" y1="705" x2="247" y2="709" stroke="#7F7768"/>
-    <line x1="298" y1="712" x2="322" y2="712" stroke="#7F7768"/><circle cx="304" cy="712" r="3" fill="#FBF7F0" stroke="#7F7768"/>
-    <line x1="298" y1="721" x2="322" y2="721" stroke="#7F7768"/><circle cx="317" cy="721" r="3" fill="#FBF7F0" stroke="#7F7768"/>
+    <!-- home (active) -->
+    <g stroke="#A94F2C">
+      <path d="M42 721.5l8-7.5 8 7.5"/>
+      <path d="M44.5 719.5V730h11v-10.5"/>
+      <path d="M48 730v-4.5h4V730"/>
+    </g>
+    <!-- journal -->
+    <g stroke="#7F7768">
+      <rect x="106" y="710" width="18" height="20" rx="3"/>
+      <line x1="112" y1="710" x2="112" y2="730"/>
+      <!-- notes -->
+      <rect x="171" y="709" width="18" height="23" rx="3"/>
+      <line x1="175.5" y1="716" x2="184.5" y2="716"/>
+      <line x1="175.5" y1="721" x2="184.5" y2="721"/>
+      <line x1="175.5" y1="726" x2="181" y2="726"/>
+      <!-- calendar -->
+      <rect x="236" y="711" width="18" height="17" rx="3"/>
+      <line x1="236" y1="716.5" x2="254" y2="716.5"/>
+      <line x1="241" y1="708" x2="241" y2="712.5"/>
+      <line x1="249" y1="708" x2="249" y2="712.5"/>
+      <!-- settings -->
+      <line x1="300" y1="713" x2="320" y2="713"/><circle cx="306" cy="713" r="2.6" fill="#FBF7F0"/>
+      <line x1="300" y1="721" x2="320" y2="721"/><circle cx="314.5" cy="721" r="2.6" fill="#FBF7F0"/>
+      <line x1="300" y1="729" x2="320" y2="729"/><circle cx="304.5" cy="729" r="2.6" fill="#FBF7F0"/>
+    </g>
   </g>
-  <circle cx="50" cy="740" r="2.5" fill="#A94F2C"/>
+  <circle cx="50" cy="737" r="2.5" fill="#A94F2C"/>
 </svg>
