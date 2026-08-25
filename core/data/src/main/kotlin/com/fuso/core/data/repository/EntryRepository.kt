@@ -27,6 +27,7 @@ interface EntryRepository {
         isPinned: Boolean,
         createdAt: Instant,
         updatedAt: Instant = Instant.now(),
+        colorIndex: Int? = null,
     )
 
     suspend fun softDeleteEntry(entryId: String)

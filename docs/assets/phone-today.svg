@@ -1,0 +1,100 @@
+<svg width="360" height="760" viewBox="0 0 360 760" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Fuso Today screen">
+  <defs>
+    <filter id="ph" x="-30%" y="-10%" width="160%" height="125%">
+      <feDropShadow dx="0" dy="14" stdDeviation="22" flood-color="#000000" flood-opacity="0.35"/>
+    </filter>
+    <linearGradient id="inkT" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#FFB697"/><stop offset="1" stop-color="#F5BE48"/>
+    </linearGradient>
+  </defs>
+
+  <!-- frame -->
+  <g filter="url(#ph)">
+    <rect x="4" y="4" width="352" height="752" rx="58" fill="#171310" stroke="#2A241C" stroke-width="2"/>
+    <rect x="18" y="18" width="324" height="724" rx="44" fill="#FBF7F0"/>
+  </g>
+  <circle cx="180" cy="38" r="5" fill="#171310"/>
+
+  <!-- status bar -->
+  <text x="44" y="62" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="14" font-weight="600" fill="#1D1B16">9:41</text>
+  <g fill="#1D1B16">
+    <rect x="278" y="52" width="3" height="6" rx="1"/><rect x="283" y="49" width="3" height="9" rx="1"/><rect x="288" y="46" width="3" height="12" rx="1"/>
+    <rect x="300" y="47" width="22" height="11" rx="3" fill="none" stroke="#1D1B16" stroke-width="1.5"/><rect x="303" y="50" width="13" height="5" rx="1.5"/>
+  </g>
+
+  <!-- header -->
+  <text x="32" y="112" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="30" font-weight="700" fill="#1D1B16">Today</text>
+  <g stroke="#7F7768" stroke-width="1.8" stroke-linecap="round">
+    <line x1="308" y1="98" x2="328" y2="98"/><circle cx="314" cy="98" r="3" fill="#FBF7F0"/>
+    <line x1="308" y1="107" x2="328" y2="107"/><circle cx="323" cy="107" r="3" fill="#FBF7F0"/>
+  </g>
+  <text x="32" y="136" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="13" fill="#9B9080">Wednesday, September 2</text>
+
+  <!-- streak card -->
+  <rect x="24" y="154" width="312" height="72" rx="20" fill="#FFFFFF" stroke="#EFE9DE"/>
+  <path d="M52 196c0-8 5-11 5-18 4 3 9 7 9 13a8 8 0 01-16 0c0-2 .5-3.5 2-5z" fill="none" stroke="#A94F2C" stroke-width="2" stroke-linejoin="round"/>
+  <text x="78" y="186" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="15" font-weight="600" fill="#1D1B16">12-day streak</text>
+  <text x="78" y="206" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="12" fill="#9B9080">Personal best &#183; 21</text>
+  <g>
+    <circle cx="252" cy="190" r="3.5" fill="#A94F2C"/><circle cx="264" cy="190" r="3.5" fill="#A94F2C"/><circle cx="276" cy="190" r="3.5" fill="#A94F2C"/>
+    <circle cx="288" cy="190" r="3.5" fill="#A94F2C"/><circle cx="300" cy="190" r="3.5" fill="#A94F2C"/>
+    <circle cx="312" cy="190" r="3.5" fill="none" stroke="#D1C5B4" stroke-width="1.5"/><circle cx="324" cy="190" r="3.5" fill="none" stroke="#D1C5B4" stroke-width="1.5"/>
+  </g>
+
+  <!-- weekly insight card -->
+  <rect x="24" y="240" width="312" height="88" rx="20" fill="#FFF6E3" stroke="#F0E2BE"/>
+  <text x="40" y="290" font-family="Georgia, serif" font-size="38" fill="#D9A93B">&#8220;</text>
+  <text x="68" y="276" font-family="Georgia, serif" font-style="italic" font-size="13.5" fill="#52483A">You write most on quiet Sunday mornings.</text>
+  <text x="68" y="296" font-family="Georgia, serif" font-style="italic" font-size="13.5" fill="#52483A">Keep one going this weekend.</text>
+  <text x="68" y="316" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="10" font-weight="600" letter-spacing="2" fill="#B08A2E">THIS WEEK</text>
+
+  <!-- quick add -->
+  <rect x="24" y="344" width="312" height="46" rx="23" fill="#FFFFFF" stroke="#D1C5B4"/>
+  <path d="M44 374 l3-8 12-12 5 5-12 12z" fill="none" stroke="#A94F2C" stroke-width="1.8" stroke-linejoin="round"/>
+  <text x="68" y="373" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="13" fill="#1D1B16">Lunch with dad <tspan fill="#8A4A2B">tomorrow</tspan> at <tspan fill="#8A6A00">1pm</tspan></text>
+  <rect x="163" y="358" width="63" height="19" rx="4" fill="#FFB697" fill-opacity="0.22"/>
+  <rect x="255" y="358" width="30" height="19" rx="4" fill="#F5BE48" fill-opacity="0.25"/>
+  <rect x="290" y="357" width="2" height="20" rx="1" fill="#A94F2C"/>
+
+  <!-- parsed chips -->
+  <rect x="24" y="402" width="88" height="24" rx="12" fill="#FFDBCC"/>
+  <text x="68" y="418" text-anchor="middle" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="11" font-weight="600" fill="#571F05">Tomorrow</text>
+  <rect x="120" y="402" width="78" height="24" rx="12" fill="#FFDEA6"/>
+  <text x="159" y="418" text-anchor="middle" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="11" font-weight="600" fill="#57400A">1:00 PM</text>
+  <rect x="206" y="402" width="70" height="24" rx="12" fill="none" stroke="#D1C5B4"/>
+  <text x="241" y="418" text-anchor="middle" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="11" font-weight="500" fill="#7F7768">+ Event</text>
+
+  <!-- recent -->
+  <text x="32" y="462" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="11" font-weight="700" letter-spacing="3" fill="#9B9080">RECENT</text>
+
+  <rect x="24" y="476" width="312" height="64" rx="18" fill="#FFFFFF" stroke="#EFE9DE"/>
+  <circle cx="48" cy="500" r="5" fill="#A94F2C"/>
+  <text x="62" y="498" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="13.5" font-weight="600" fill="#1D1B16">Morning pages</text>
+  <text x="62" y="518" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="12" fill="#7F7768">Slow start, good coffee, a plan.</text>
+  <text x="324" y="498" text-anchor="end" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="11" fill="#9B9080">7:12 AM</text>
+  <path d="M314 516h8m-8 0l2-6h4l2 6" fill="none" stroke="#C96A3F" stroke-width="1.5"/>
+
+  <rect x="24" y="550" width="312" height="64" rx="18" fill="#FFFFFF" stroke="#EFE9DE"/>
+  <circle cx="48" cy="574" r="5" fill="#5B6141"/>
+  <text x="62" y="572" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="13.5" font-weight="600" fill="#1D1B16">Reading notes &#8212; Dune</text>
+  <text x="62" y="592" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="12" fill="#7F7768">The Fremen survive because&#8230;</text>
+  <text x="324" y="572" text-anchor="end" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="11" fill="#9B9080">Yesterday</text>
+
+  <rect x="24" y="624" width="312" height="64" rx="18" fill="#FFFFFF" stroke="#EFE9DE"/>
+  <circle cx="48" cy="648" r="5" fill="#7A5900"/>
+  <text x="62" y="646" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="13.5" font-weight="600" fill="#1D1B16">Gym &#8212; squat day</text>
+  <text x="62" y="666" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="12" fill="#7F7768">120 kg &#215; 5, felt strong.</text>
+  <text x="324" y="646" text-anchor="end" font-family="'Segoe UI', Roboto, Arial, sans-serif" font-size="11" fill="#9B9080">Yesterday</text>
+
+  <!-- bottom nav -->
+  <line x1="18" y1="700" x2="342" y2="700" stroke="#EFE9DE"/>
+  <g fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M40 722l10-9 10 9M44 719v13h5v-5h2v5h5v-13" stroke="#A94F2C"/>
+    <path d="M107 708h16v24h-12a4 4 0 01-4-4zM113 708v24" stroke="#7F7768"/>
+    <rect x="171" y="706" width="17" height="26" rx="3" stroke="#7F7768"/><line x1="175" y1="714" x2="184" y2="714" stroke="#7F7768"/><line x1="175" y1="720" x2="184" y2="720" stroke="#7F7768"/>
+    <rect x="235" y="708" width="17" height="17" rx="3" stroke="#7F7768"/><line x1="235" y1="714" x2="252" y2="714" stroke="#7F7768"/><line x1="240" y1="705" x2="240" y2="709" stroke="#7F7768"/><line x1="247" y1="705" x2="247" y2="709" stroke="#7F7768"/>
+    <line x1="298" y1="712" x2="322" y2="712" stroke="#7F7768"/><circle cx="304" cy="712" r="3" fill="#FBF7F0" stroke="#7F7768"/>
+    <line x1="298" y1="721" x2="322" y2="721" stroke="#7F7768"/><circle cx="317" cy="721" r="3" fill="#FBF7F0" stroke="#7F7768"/>
+  </g>
+  <circle cx="50" cy="740" r="2.5" fill="#A94F2C"/>
+</svg>

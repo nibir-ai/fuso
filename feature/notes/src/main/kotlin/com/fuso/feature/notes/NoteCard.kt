@@ -55,7 +55,9 @@ fun NoteCard(
             },
         shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
+            containerColor = note.colorIndex?.let { index ->
+                com.fuso.core.designsystem.theme.NoteColors.color(index, androidx.compose.foundation.isSystemInDarkTheme())
+            } ?: MaterialTheme.colorScheme.surfaceContainerLowest,
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = if (pressed) 1.dp else 2.dp),
         interactionSource = interactionSource,

@@ -7,6 +7,8 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,12 +29,13 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material.icons.automirrored.rounded.Delete
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.DeleteOutline
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Checklist
 import androidx.compose.material.icons.rounded.FormatBold
@@ -50,7 +53,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -77,7 +82,7 @@ fun EditorScreen(
     viewModel: EditorViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    var showDeleteDialog by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
 
     BackHandler {
         viewModel.flushSave(onBack)
@@ -92,7 +97,7 @@ fun EditorScreen(
                 androidx.compose.material3.TextButton(onClick = {
                     showDeleteDialog = false
                     viewModel.deleteEntry(onDone = onBack)
-                }) { Text("Move to bin", color = MaterialTheme.colorScheme.error) }
+                }) { Text("Move to bin") }
             },
             dismissButton = {
                 androidx.compose.material3.TextButton(onClick = { showDeleteDialog = false }) { Text("Keep writing") }
@@ -121,7 +126,17 @@ fun EditorScreen(
             )
         },
         bottomBar = {
-            EditorToolbar(
+            Column {
+                androidx.compose.animation.AnimatedVisibility(visible = !state.isLoading && state.type == com.fuso.core.model.EntryType.NOTE) {
+                    NoteSwatchRow(
+                        selected = state.colorIndex,
+                        onPick = viewModel::setColorIndex,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 20.dp, vertical = 4.dp),
+                    )
+                }
+                EditorToolbar(
                 activeKind = activeBlockKind(state),
                 enabled = !state.isLoading,
                 onConvertHeading1 = { convertFocused(state, viewModel) { text -> BlockContent.Heading(1, text) } },
@@ -133,6 +148,7 @@ fun EditorScreen(
                 onQuote = { convertFocused(state, viewModel) { text -> BlockContent.Quote(text) } },
                 onAddBlock = { viewModel.insertBlockAfter(state.focusedBlockId) },
             )
+            }
         },
     ) { padding ->
         if (state.isLoading) {
@@ -302,11 +318,43 @@ private fun EditorTopBar(saveState: SaveState, onBack: () -> Unit, onDelete: () 
         SaveIndicator(saveState = saveState)
         IconButton(onClick = onDelete) {
             Icon(
-                imageVector = Icons.AutoMirrored.Rounded.Delete,
+                imageVector = Icons.Rounded.DeleteOutline,
                 contentDescription = "Move to bin",
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
+    }
+}
+
+@Composable
+private fun NoteSwatchRow(selected: Int?, onPick: (Int?) -> Unit, modifier: Modifier = Modifier) {
+    val dark = androidx.compose.foundation.isSystemInDarkTheme()
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        com.fuso.core.designsystem.theme.NoteColors.palette.forEach { noteColor ->
+            val isSelected = selected == noteColor.index
+            Surface(
+                shape = CircleShape,
+                color = if (dark) noteColor.dark else noteColor.light,
+                border = if (isSelected) {
+                    BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
+                } else {
+                    BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f))
+                },
+                modifier = Modifier
+                    .size(26.dp)
+                    .clickable { onPick(if (isSelected) null else noteColor.index) },
+            ) {}
+        }
+        Spacer(modifier = Modifier.weight(1f))
+        Text(
+            text = "Colour",
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
     }
 }
 

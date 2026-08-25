@@ -2,17 +2,23 @@ package com.fuso.feature.notes
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.PushPin
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -45,33 +51,64 @@ private fun NotesContent(
     modifier: Modifier = Modifier,
 ) {
     if (!uiState.isLoading && uiState.pinnedNotes.isEmpty() && uiState.otherNotes.isEmpty()) {
-        Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            FadeSlideIn(index = 1) {
-                EmptyState(
-                    ornament = Icons.Rounded.PushPin,
-                    title = "A wall for your thoughts",
-                    body = "Notes live here — lists, ideas, little things worth keeping. Pin the ones you return to.",
-                    actionLabel = "Create a note",
-                    onAction = onCreateNote,
-                )
+        Box(modifier = modifier.fillMaxSize()) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.align(Alignment.Center),
+            ) {
+                FadeSlideIn(index = 1) {
+                    EmptyState(
+                        ornament = Icons.Rounded.PushPin,
+                        title = "A wall for your thoughts",
+                        body = "Notes live here — lists, ideas, little things worth keeping. Pin the ones you return to.",
+                    )
+                }
             }
+            NotesFab(onClick = onCreateNote, modifier = Modifier.align(Alignment.BottomEnd))
         }
         return
     }
-    LazyVerticalGrid(
-        columns = GridCells.Adaptive(minSize = 160.dp),
-        modifier = modifier.fillMaxSize(),
-        contentPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 8.dp, bottom = 28.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        if (uiState.pinnedNotes.isNotEmpty()) {
-            sectionHeader(title = "Pinned")
-            pinnedItems(uiState = uiState, onNoteClick = onNoteClick)
+    Box(modifier = modifier.fillMaxSize()) {
+        LazyVerticalGrid(
+            columns = GridCells.Adaptive(minSize = 160.dp),
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 8.dp, bottom = 96.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            if (uiState.pinnedNotes.isNotEmpty()) {
+                sectionHeader(title = "Pinned")
+                pinnedItems(uiState = uiState, onNoteClick = onNoteClick)
+            }
+            if (uiState.otherNotes.isNotEmpty()) {
+                sectionHeader(title = if (uiState.pinnedNotes.isEmpty()) "Notes" else "Everything else")
+                otherItems(uiState = uiState, onNoteClick = onNoteClick)
+            }
         }
-        if (uiState.otherNotes.isNotEmpty()) {
-            sectionHeader(title = if (uiState.pinnedNotes.isEmpty()) "Notes" else "Everything else")
-            otherItems(uiState = uiState, onNoteClick = onNoteClick)
+        NotesFab(
+            onClick = onCreateNote,
+            modifier = Modifier.align(Alignment.BottomEnd),
+        )
+    }
+}
+
+@Composable
+private fun NotesFab(onClick: () -> Unit, modifier: Modifier = Modifier) {
+    Surface(
+        onClick = onClick,
+        shape = CircleShape,
+        color = MaterialTheme.colorScheme.primary,
+        shadowElevation = 8.dp,
+        modifier = modifier
+            .padding(end = 24.dp, bottom = 24.dp)
+            .size(56.dp),
+    ) {
+        Box(contentAlignment = Alignment.Center) {
+            Icon(
+                imageVector = Icons.Rounded.Add,
+                contentDescription = "New note",
+                tint = MaterialTheme.colorScheme.onPrimary,
+            )
         }
     }
 }

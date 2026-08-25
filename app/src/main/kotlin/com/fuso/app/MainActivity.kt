@@ -3,6 +3,7 @@ package com.fuso.app
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -23,10 +24,22 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         maybeRequestNotificationPermission()
+        handleWidgetIntent(intent)
         setContent {
             FusoTheme {
                 FusoApp()
             }
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        handleWidgetIntent(intent)
+    }
+
+    private fun handleWidgetIntent(intent: Intent?) {
+        intent?.getStringExtra(com.fuso.app.widgets.WIDGET_OPEN_EXTRA)?.let {
+            com.fuso.app.widgets.WidgetDeepLink.pendingTarget = it
         }
     }
 

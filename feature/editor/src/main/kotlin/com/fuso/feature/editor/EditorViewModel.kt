@@ -49,6 +49,7 @@ data class EditorUiState(
     val blocks: List<EditorBlockUi> = emptyList(),
     val tags: List<String> = emptyList(),
     val isPinned: Boolean = false,
+    val colorIndex: Int? = null,
     val createdAt: Instant = Instant.now(),
     val saveState: SaveState = SaveState.Idle,
     val focusedBlockId: String? = null,
@@ -83,6 +84,10 @@ class EditorViewModel @Inject constructor(
     )
     val uiState: StateFlow<EditorUiState> = _uiState.asStateFlow()
 
+    fun setColorIndex(value: Int?) {
+        mutate { it.copy(colorIndex = value) }
+    }
+
     init {
         viewModelScope.launch {
             if (isNewEntry) {
@@ -110,6 +115,7 @@ class EditorViewModel @Inject constructor(
                         title = entry.title,
                         tags = entry.tags,
                         isPinned = entry.isPinned,
+                        colorIndex = entry.colorIndex,
                         createdAt = entry.createdAt,
                         blocks = if (blocks.isEmpty()) {
                             listOf(EditorBlockUi(newBlockId(), BlockContent.Paragraph("")))
@@ -300,6 +306,7 @@ class EditorViewModel @Inject constructor(
                 blocks = state.blocks.map { it.content },
                 tags = state.tags,
                 isPinned = state.isPinned,
+                colorIndex = state.colorIndex,
                 createdAt = createdAt,
             )
         }

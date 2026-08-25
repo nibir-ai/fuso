@@ -61,6 +61,7 @@ class RoomEntryRepository @Inject constructor(
         isPinned: Boolean,
         createdAt: Instant,
         updatedAt: Instant,
+        colorIndex: Int?,
     ) {
         database.runInTransaction {
             val blockEntities = blocks.mapIndexed { position, content ->
@@ -83,7 +84,7 @@ class RoomEntryRepository @Inject constructor(
                         createdAtMillis = createdAt.toEpochMilli(),
                         updatedAtMillis = updatedAt.toEpochMilli(),
                         isPinned = isPinned,
-                    ),
+                    ).copy(colorIndex = colorIndex),
                 ),
             )
             blockDao.deleteBlocksNotIn(entryId, blockEntities.map { it.id })

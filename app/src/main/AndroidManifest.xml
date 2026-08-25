@@ -23,5 +23,41 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <receiver
+            android:name=".widgets.QuickCaptureWidgetReceiver"
+            android:exported="false"
+            android:label="Fuso Quick capture">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_quick_capture" />
+        </receiver>
+
+        <receiver
+            android:name=".widgets.TodayStatsWidgetReceiver"
+            android:exported="false"
+            android:label="Fuso Today">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_today_stats" />
+        </receiver>
+
+        <receiver
+            android:name=".widgets.RecentNotesWidgetReceiver"
+            android:exported="false"
+            android:label="Fuso Notes">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_recent_notes" />
+        </receiver>
     </application>
 </manifest>

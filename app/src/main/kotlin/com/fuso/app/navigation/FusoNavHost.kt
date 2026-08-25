@@ -63,6 +63,8 @@ import com.fuso.feature.search.SearchRoute
 import com.fuso.feature.search.SearchScreen
 import com.fuso.feature.settings.SettingsRoute
 import com.fuso.feature.settings.SettingsScreen
+import com.fuso.feature.settings.TrashRoute
+import com.fuso.feature.settings.TrashScreen
 import com.fuso.feature.today.TodayRoute
 import com.fuso.feature.today.TodayScreen
 
@@ -86,6 +88,18 @@ fun FusoApp(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = backStackEntry?.destination
+
+    androidx.compose.runtime.LaunchedEffect(Unit) {
+        com.fuso.app.widgets.WidgetDeepLink.pendingTarget?.let { target ->
+            com.fuso.app.widgets.WidgetDeepLink.pendingTarget = null
+            val type = if (target == com.fuso.app.widgets.OPEN_NEW_NOTE) {
+                EntryType.NOTE
+            } else {
+                EntryType.JOURNAL
+            }
+            navController.navigate(editorRoute(NewEntryArg, type))
+        }
+    }
 
     SharedTransitionLayout {
         CompositionLocalProvider(LocalSharedTransitionScope provides this) {
@@ -178,7 +192,15 @@ fun FusoApp(modifier: Modifier = Modifier) {
                     }
                     composable(route = SettingsRoute) {
                         WithRouteScope(this) {
-                            SettingsScreen(onBack = { navController.popBackStack() })
+                            SettingsScreen(
+                                onBack = { navController.popBackStack() },
+                                onOpenTrash = { navController.navigate(TrashRoute) },
+                            )
+                        }
+                    }
+                    composable(route = TrashRoute) {
+                        WithRouteScope(this) {
+                            TrashScreen(onBack = { navController.popBackStack() })
                         }
                     }
                 }
