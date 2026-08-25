@@ -25,6 +25,7 @@ data class SettingsUiState(
     val password: String = "",
     val isAuthBusy: Boolean = false,
     val authError: String = "",
+    val themeMode: com.fuso.core.designsystem.theme.ThemeMode = com.fuso.core.designsystem.theme.ThemeMode.SYSTEM,
 )
 
 @HiltViewModel
@@ -32,6 +33,7 @@ class SettingsViewModel @Inject constructor(
     private val sessionManager: SessionManager,
     private val api: SupabaseApi,
     private val syncEngine: SyncEngine,
+    private val appearanceController: com.fuso.core.designsystem.theme.AppearanceController,
 ) : ViewModel() {
 
     private val formState = MutableStateFlow(
@@ -42,7 +44,8 @@ class SettingsViewModel @Inject constructor(
         sessionManager.session,
         syncEngine.state,
         formState.asStateFlow(),
-    ) { session, sync, form ->
+        appearanceController.mode,
+    ) { session, sync, form, mode ->
         SettingsUiState(
             session = session,
             sync = sync,
@@ -50,8 +53,13 @@ class SettingsViewModel @Inject constructor(
             password = form.password,
             isAuthBusy = form.isBusy,
             authError = form.error,
+            themeMode = mode,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), SettingsUiState())
+
+    fun setThemeMode(mode: com.fuso.core.designsystem.theme.ThemeMode) {
+        appearanceController.setMode(mode)
+    }
 
     fun onEmailChange(value: String) {
         formState.value = formState.value.copy(email = value.trim(), error = "")

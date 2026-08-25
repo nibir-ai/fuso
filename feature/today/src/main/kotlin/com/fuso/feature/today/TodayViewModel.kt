@@ -32,9 +32,29 @@ data class TodayUiState(
 class TodayViewModel @Inject constructor(
     private val entryRepository: EntryRepository,
     behaviorModel: BehaviorModel,
+    private val moodStore: com.fuso.core.data.mood.MoodStore,
+    private val calendarRepository: com.fuso.core.data.repository.DeviceCalendarRepository,
 ) : ViewModel() {
 
     private val weeklyInsight = MutableStateFlow<String?>(null)
+
+    data class MoodUiState(
+        val todayMood: Int? = null,
+        val weekMoods: Map<java.time.LocalDate, Int> = emptyMap(),
+    )
+
+    private val _mood = MutableStateFlow(loadMoods())
+    val mood: StateFlow<MoodUiState> = _mood.asStateFlow()
+
+    fun checkIn(moodValue: Int) {
+        moodStore.setMood(LocalDate.now(), moodValue)
+        _mood.value = loadMoods()
+    }
+
+    private fun loadMoods(): MoodUiState = MoodUiState(
+        todayMood = moodStore.moodFor(LocalDate.now()),
+        weekMoods = moodStore.moodsBetween(LocalDate.now().minusDays(6), LocalDate.now()),
+    )
 
     val uiState: StateFlow<TodayUiState> = entryRepository.observeEntries()
         .map { entries ->
@@ -64,19 +84,31 @@ class TodayViewModel @Inject constructor(
         }
     }
 
-    fun quickAdd(rawInput: String) {
+    fun quickAdd(rawInput: String, createCalendarEvent: Boolean = false) {
         if (rawInput.isBlank()) return
         viewModelScope.launch {
             val parsed = QuickAddParser.parse(rawInput)
             val text = parsed.cleanedText.ifBlank { rawInput.trim() }
+            val isEvent = parsed.isEvent && createCalendarEvent &&
+                parsed.targetDate != null && parsed.time != null
             runCatching {
+                val entryId = "e-" + java.util.UUID.randomUUID().toString()
+                if (isEvent) {
+                    val zone = ZoneId.systemDefault()
+                    val begin = parsed.targetDate!!.atTime(parsed.time).atZone(zone).toInstant().toEpochMilli()
+                    calendarRepository.insertEvent(
+                        title = text,
+                        beginMillis = begin,
+                        endMillis = begin + 60L * 60L * 1000L,
+                    )
+                }
                 entryRepository.saveEntry(
-                    entryId = "e-" + java.util.UUID.randomUUID().toString(),
+                    entryId = entryId,
                     type = if (parsed.isEvent) EntryType.JOURNAL else EntryType.NOTE,
                     title = text,
                     blocks = listOf(BlockContent.Paragraph(text)),
                     tags = buildList {
-                        add("quick")
+                        add(if (isEvent) "calendar" else "quick")
                         parsed.targetDate?.let { add(it.toString()) }
                     },
                     isPinned = false,

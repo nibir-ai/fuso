@@ -14,12 +14,45 @@ import javax.inject.Singleton
 interface DeviceCalendarRepository {
 
     suspend fun eventsBetween(start: LocalDate, endExclusive: LocalDate): List<DeviceCalendarEvent>
+
+    suspend fun insertEvent(title: String, beginMillis: Long, endMillis: Long): Boolean
 }
 
 @Singleton
 class DeviceCalendarRepositoryImpl @Inject constructor(
     @ApplicationContext private val context: Context,
 ) : DeviceCalendarRepository {
+
+    override suspend fun insertEvent(title: String, beginMillis: Long, endMillis: Long): Boolean =
+        kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+            runCatching {
+                val calendarId = firstVisibleCalendarId() ?: return@runCatching false
+                val values = android.content.ContentValues().apply {
+                    put(android.provider.CalendarContract.Events.CALENDAR_ID, calendarId)
+                    put(android.provider.CalendarContract.Events.TITLE, title)
+                    put(android.provider.CalendarContract.Events.DTSTART, beginMillis)
+                    put(android.provider.CalendarContract.Events.DTEND, endMillis)
+                    put(
+                        android.provider.CalendarContract.Events.EVENT_TIMEZONE,
+                        java.util.TimeZone.getDefault().id,
+                    )
+                }
+                context.contentResolver.insert(android.provider.CalendarContract.Events.CONTENT_URI, values) != null
+            }.getOrDefault(false)
+        }
+
+    private fun firstVisibleCalendarId(): Long? {
+        val uri = android.provider.CalendarContract.Calendars.CONTENT_URI
+        return context.contentResolver.query(
+            uri,
+            arrayOf(android.provider.CalendarContract.Calendars._ID),
+            "${android.provider.CalendarContract.Calendars.VISIBLE}=1",
+            null,
+            null,
+        )?.use { cursor ->
+            if (cursor.moveToFirst()) cursor.getLong(0) else null
+        }
+    }
 
     override suspend fun eventsBetween(start: LocalDate, endExclusive: LocalDate): List<DeviceCalendarEvent> {
         val zone = ZoneId.systemDefault()

@@ -88,6 +88,31 @@ class EditorViewModel @Inject constructor(
         mutate { it.copy(colorIndex = value) }
     }
 
+    fun tidyFocusedBlock() {
+        val state = _uiState.value
+        val blockId = state.focusedBlockId ?: return
+        val block = state.blocks.firstOrNull { it.id == blockId } ?: return
+        val content = block.content as? BlockContent.Paragraph ?: return
+        if (content.text.isBlank()) return
+
+        val structured = com.fuso.core.intelligence.nlp.SmartStructure.toBlocks(content.text)
+        if (structured.size == 1 && structured.first() is BlockContent.Paragraph) {
+            val polished = structured.first().text
+            if (polished != content.text) setText(blockId, polished)
+            return
+        }
+
+        mutate { s ->
+            val index = s.blocks.indexOfFirst { it.id == blockId }
+            if (index < 0) return@mutate s
+            val mutable = s.blocks.toMutableList()
+            mutable.removeAt(index)
+            val inserted = structured.map { EditorBlockUi(newBlockId(), it) }
+            mutable.addAll(index, inserted)
+            s.copy(blocks = mutable, focusRequest = FocusRequest(inserted.first().id, System.nanoTime()))
+        }
+    }
+
     init {
         viewModelScope.launch {
             if (isNewEntry) {
@@ -148,10 +173,36 @@ class EditorViewModel @Inject constructor(
         }
         val parts = value.split('\n').map { it.trim('\r') }
         setText(blockId, parts.first())
+        val sourceKind = _uiState.value.blocks.firstOrNull { it.id == blockId }?.content
         var anchorId = blockId
         parts.drop(1).forEach { part ->
-            anchorId = insertBlockAfter(anchorId, BlockContent.Paragraph(part))
+            anchorId = insertContinuationBlock(anchorId, sourceKind, part, isFirstContinuation = anchorId == blockId)
         }
+    }
+
+    private fun insertContinuationBlock(
+        anchorId: String,
+        sourceContent: BlockContent?,
+        text: String,
+        isFirstContinuation: Boolean,
+    ): String {
+        val continueSameType = when (sourceContent) {
+            is BlockContent.Bullet -> if (text.isBlank()) null else BlockContent.Bullet(text)
+            is BlockContent.Todo -> if (text.isBlank()) null else BlockContent.Todo(text)
+            is BlockContent.Numbered ->
+                if (text.isBlank()) {
+                    null
+                } else {
+                    BlockContent.Numbered(text, index = sourceContent.index + 1)
+                }
+            else -> BlockContent.Paragraph(text)
+        }
+        val newContent = if (isFirstContinuation && continueSameType != null && text.isNotBlank()) {
+            continueSameType
+        } else {
+            BlockContent.Paragraph(text)
+        }
+        return insertBlockAfter(anchorId, newContent)
     }
 
     private fun setText(blockId: String, text: String) {

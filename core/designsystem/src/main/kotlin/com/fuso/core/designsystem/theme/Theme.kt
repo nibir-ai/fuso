@@ -1,6 +1,7 @@
 package com.fuso.core.designsystem.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
@@ -91,12 +92,37 @@ val FusoShapes = Shapes(
     extraLarge = RoundedCornerShape(28.dp),
 )
 
+private val PitchBlackColors = DarkColors.copy(
+    background = Color(0xFF000000),
+    onBackground = Color(0xFFE8E1D5),
+    surface = Color(0xFF000000),
+    onSurface = Color(0xFFE8E1D5),
+    surfaceDim = Color(0xFF000000),
+    surfaceBright = Color(0xFF2A2721),
+    surfaceContainerLowest = Color(0xFF0A0908),
+    surfaceContainerLow = Color(0xFF141210),
+    surfaceContainer = Color(0xFF181613),
+    surfaceContainerHigh = Color(0xFF201D18),
+    surfaceContainerHighest = Color(0xFF262320),
+    surfaceVariant = Color(0xFF2B2620),
+)
+
 @Composable
 fun FusoTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    mode: ThemeMode = ThemeMode.SYSTEM,
     content: @Composable () -> Unit,
 ) {
-    val colorScheme = if (darkTheme) DarkColors else LightColors
+    val darkTheme = when (mode) {
+        ThemeMode.SYSTEM -> isSystemInDarkTheme()
+        ThemeMode.LIGHT -> false
+        ThemeMode.DARK, ThemeMode.PITCH_BLACK -> true
+    }
+    val colorScheme = when {
+        mode == ThemeMode.LIGHT -> LightColors
+        mode == ThemeMode.PITCH_BLACK -> PitchBlackColors
+        darkTheme -> DarkColors
+        else -> LightColors
+    }
     MaterialTheme(
         colorScheme = colorScheme,
         typography = FusoTypography,

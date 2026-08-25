@@ -25,4 +25,9 @@ object AppModule {
     fun provideGeminiConfig(): GeminiConfig = GeminiConfig(
         apiKey = BuildConfig.GEMINI_API_KEY,
     )
+
+    @Provides
+    @Singleton
+    fun provideAppearanceController(@dagger.hilt.android.qualifiers.ApplicationContext context: android.content.Context): com.fuso.core.designsystem.theme.AppearanceController =
+        com.fuso.core.designsystem.theme.AppearanceController(context)
 }

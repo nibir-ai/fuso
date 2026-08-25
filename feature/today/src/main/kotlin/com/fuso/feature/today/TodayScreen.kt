@@ -13,6 +13,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -40,6 +41,11 @@ import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.Eco
 import androidx.compose.material.icons.rounded.LocalFireDepartment
 import androidx.compose.material.icons.rounded.Mood
+import androidx.compose.material.icons.rounded.SentimentDissatisfied
+import androidx.compose.material.icons.rounded.SentimentNeutral
+import androidx.compose.material.icons.rounded.SentimentSatisfied
+import androidx.compose.material.icons.rounded.SentimentVeryDissatisfied
+import androidx.compose.material.icons.rounded.SentimentVerySatisfied
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -99,11 +105,60 @@ fun TodayScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val insight by viewModel.insight.collectAsStateWithLifecycle()
     val justSaved by viewModel.justSaved.collectAsStateWithLifecycle()
+    val mood by viewModel.mood.collectAsStateWithLifecycle()
+    var showMoodDialog by remember { mutableStateOf(false) }
+
+    val context = androidx.compose.ui.platform.LocalContext.current
+    var pendingEventText by remember { mutableStateOf<String?>(null) }
+    fun hasWriteAccess(): Boolean = androidx.core.content.ContextCompat.checkSelfPermission(
+        context,
+        android.Manifest.permission.WRITE_CALENDAR,
+    ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+
+    val calendarPermissionLauncher = androidx.activity.compose.rememberLauncherForActivityResult(
+        androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions(),
+    ) { grants ->
+        val allowed = grants[android.Manifest.permission.WRITE_CALENDAR] == true &&
+            grants[android.Manifest.permission.READ_CALENDAR] == true
+        pendingEventText?.let { text ->
+            viewModel.quickAdd(text, createCalendarEvent = allowed)
+        }
+        pendingEventText = null
+    }
+
+    fun handleQuickSubmit(raw: String) {
+        val parsed = QuickAddParser.parse(raw)
+        val wantsEvent = parsed.isEvent && parsed.targetDate != null && parsed.time != null
+        if (wantsEvent && !hasWriteAccess()) {
+            pendingEventText = raw
+            calendarPermissionLauncher.launch(
+                arrayOf(
+                    android.Manifest.permission.READ_CALENDAR,
+                    android.Manifest.permission.WRITE_CALENDAR,
+                ),
+            )
+        } else {
+            viewModel.quickAdd(raw, createCalendarEvent = wantsEvent)
+        }
+    }
+
+    if (showMoodDialog) {
+        MoodCheckInDialog(
+            onDismiss = { showMoodDialog = false },
+            onPick = { value ->
+                viewModel.checkIn(value)
+                showMoodDialog = false
+            },
+        )
+    }
+
     TodayContent(
         uiState = uiState,
         weeklyInsight = insight,
         justSaved = justSaved,
-        onSubmitQuickAdd = viewModel::quickAdd,
+        mood = mood,
+        onMoodClick = { showMoodDialog = true },
+        onSubmitQuickAdd = { raw, _ -> handleQuickSubmit(raw) },
         onEntryClick = onEntryClick,
         onOpenSettings = onOpenSettings,
         modifier = modifier,
@@ -111,11 +166,88 @@ fun TodayScreen(
 }
 
 @Composable
+private fun MoodCheckInDialog(
+    onDismiss: () -> Unit,
+    onPick: (Int) -> Unit,
+) {
+    val haptics = LocalHapticFeedback.current
+    androidx.compose.ui.window.Dialog(onDismissRequest = onDismiss) {
+        Surface(
+            shape = MaterialTheme.shapes.extraLarge,
+            color = MaterialTheme.colorScheme.surfaceContainerLowest,
+        ) {
+            Column(
+                modifier = Modifier.padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Text(
+                    text = "How's today feeling?",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "Only you will ever see this.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Spacer(modifier = Modifier.height(18.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    listOf(
+                        Triple(Icons.Rounded.SentimentVeryDissatisfied, "Rough", Color(0xFFC96A5A)),
+                        Triple(Icons.Rounded.SentimentDissatisfied, "Low", Color(0xFFD08B4F)),
+                        Triple(Icons.Rounded.SentimentNeutral, "Okay", Color(0xFF9A917F)),
+                        Triple(Icons.Rounded.SentimentSatisfied, "Good", Color(0xFF7E9455)),
+                        Triple(Icons.Rounded.SentimentVerySatisfied, "Bright", Color(0xFF5E8C61)),
+                    ).forEach { (icon, label, tint) ->
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Surface(
+                                shape = CircleShape,
+                                color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                modifier = Modifier
+                                    .size(46.dp)
+                                    .clickable(
+                                        interactionSource = remember { MutableInteractionSource() },
+                                        indication = null,
+                                    ) {
+                                        haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                        onPick(moodIndexFor(label))
+                                    },
+                            ) {
+                                Box(contentAlignment = Alignment.Center) {
+                                    Icon(imageVector = icon, contentDescription = label, tint = tint, modifier = Modifier.size(28.dp))
+                                }
+                            }
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = label,
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+private fun moodIndexFor(label: String): Int = when (label) {
+    "Rough" -> 1
+    "Low" -> 2
+    "Okay" -> 3
+    "Good" -> 4
+    else -> 5
+}
+
+@Composable
 private fun TodayContent(
     uiState: TodayUiState,
     weeklyInsight: String?,
     justSaved: Boolean,
-    onSubmitQuickAdd: (String) -> Unit,
+    mood: TodayViewModel.MoodUiState,
+    onMoodClick: () -> Unit,
+    onSubmitQuickAdd: (String, Boolean) -> Unit,
     onEntryClick: (String) -> Unit,
     onOpenSettings: () -> Unit,
     modifier: Modifier = Modifier,
@@ -139,7 +271,7 @@ private fun TodayContent(
             }
         }
         item(key = "status") {
-            FadeSlideIn(index = 2) { StatusRow(streak = uiState.streak) }
+            FadeSlideIn(index = 2) { StatusRow(streak = uiState.streak, mood = mood, onMoodClick = onMoodClick) }
         }
         if (uiState.recentEntries.isNotEmpty()) {
             item(key = "recent-title") {
@@ -260,10 +392,108 @@ private fun greetingFor(now: LocalDateTime): String = when (now.hour) {
 }
 
 @Composable
-private fun StatusRow(streak: Int, modifier: Modifier = Modifier) {
-    Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-        StreakPill(streakDays = streak)
-        GhostPill(text = "Mood check-in")
+private fun StatusRow(
+    streak: Int,
+    mood: TodayViewModel.MoodUiState,
+    onMoodClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column {
+        Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            StreakPill(streakDays = streak)
+            MoodPill(moodValue = mood.todayMood, onClick = onMoodClick)
+        }
+        if (mood.weekMoods.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(8.dp))
+            WeekTrail(weekMoods = mood.weekMoods)
+        }
+    }
+}
+
+@Composable
+private fun MoodPill(moodValue: Int?, onClick: () -> Unit, modifier: Modifier = Modifier) {
+    val haptics = LocalHapticFeedback.current
+    val (label, icon) = when (moodValue) {
+        1 -> "Rough" to Icons.Rounded.SentimentVeryDissatisfied
+        2 -> "Low" to Icons.Rounded.SentimentDissatisfied
+        3 -> "Okay" to Icons.Rounded.SentimentNeutral
+        4 -> "Good" to Icons.Rounded.SentimentSatisfied
+        5 -> "Bright" to Icons.Rounded.SentimentVerySatisfied
+        else -> "Mood check-in" to Icons.Rounded.Mood
+    }
+    Surface(
+        modifier = modifier,
+        shape = CircleShape,
+        color = MaterialTheme.colorScheme.surfaceContainerLowest,
+        border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.outlineVariant),
+    ) {
+        Row(
+            modifier = Modifier
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                    onClickLabel = label,
+                ) {
+                    haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                    onClick()
+                }
+                .padding(horizontal = 14.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(16.dp),
+            )
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
+}
+
+@Composable
+private fun WeekTrail(weekMoods: Map<java.time.LocalDate, Int>, modifier: Modifier = Modifier) {
+    val today = java.time.LocalDate.now()
+    val labels = listOf("S", "M", "T", "W", "T", "F", "S")
+    Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+        Text(
+            text = "Your week",
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(end = 10.dp),
+        )
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            (0 until 7).forEach { back ->
+                val date = today.minusDays((6 - back).toLong())
+                val value = weekMoods[date]
+                val tint = when (value) {
+                    1 -> Color(0xFFC96A5A)
+                    2 -> Color(0xFFD08B4F)
+                    3 -> Color(0xFF9A917F)
+                    4 -> Color(0xFF7E9455)
+                    5 -> Color(0xFF5E8C61)
+                    else -> MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.55f)
+                }
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Box(
+                        modifier = Modifier
+                            .size(if (date == today) 16.dp else 12.dp)
+                            .clip(CircleShape)
+                            .background(tint.copy(alpha = if (value == null) 0.35f else 1f)),
+                    )
+                    Text(
+                        text = labels[date.dayOfWeek.value % 7],
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -325,7 +555,7 @@ private fun GhostPill(text: String, modifier: Modifier = Modifier) {
 @Composable
 private fun QuickAddCard(
     justSaved: Boolean,
-    onSubmit: (String) -> Unit,
+    onSubmit: (String, Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var fieldValue by rememberSaveable(stateSaver = androidx.compose.runtime.saveable.autoSaver()) {
@@ -334,6 +564,31 @@ private fun QuickAddCard(
     val parsed = remember(fieldValue.text) { QuickAddParser.parse(fieldValue.text) }
     val interpretation = remember(parsed) { QuickAddParser.describe(parsed) }
     val haptics = LocalHapticFeedback.current
+    val spanHighlight = MaterialTheme.colorScheme.primary.copy(alpha = 0.28f)
+    val spanTransformation = androidx.compose.runtime.remember(parsed.spans, spanHighlight) {
+        androidx.compose.ui.text.input.VisualTransformation { textValue ->
+            val builder = androidx.compose.ui.text.AnnotatedString.Builder(textValue)
+            parsed.spans.forEach { span ->
+                val start = span.startInOriginal.coerceIn(0, textValue.length)
+                val end = span.endInOriginal.coerceIn(0, textValue.length)
+                if (end > start) {
+                    builder.addStyle(
+                        SpanStyle(
+                            textDecoration = TextDecoration.Underline,
+                            background = spanHighlight,
+                            fontWeight = FontWeight.Bold,
+                        ),
+                        start,
+                        end,
+                    )
+                }
+            }
+            androidx.compose.ui.text.input.TransformedText(
+                builder.toAnnotatedString(),
+                androidx.compose.ui.text.input.OffsetMapping.Identity,
+            )
+        }
+    }
 
     Surface(
         shape = MaterialTheme.shapes.extraLarge,
@@ -372,6 +627,7 @@ private fun QuickAddCard(
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
                         ),
                         cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
+                        visualTransformation = spanTransformation,
                         decorationBox = { inner ->
                             Box {
                                 if (fieldValue.text.isEmpty()) {
@@ -412,7 +668,9 @@ private fun QuickAddCard(
                             enabled = canSubmit,
                         ) {
                             haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                            onSubmit(fieldValue.text)
+                            val p = QuickAddParser.parse(fieldValue.text)
+                            val wantsEvent = p.isEvent && p.targetDate != null && p.time != null
+                            onSubmit(fieldValue.text, wantsEvent)
                             fieldValue = TextFieldValue("")
                         },
                 ) {

@@ -146,6 +146,7 @@ fun EditorScreen(
                 onBullet = { convertFocused(state, viewModel) { text -> BlockContent.Bullet(text) } },
                 onTodo = { convertFocused(state, viewModel) { text -> BlockContent.Todo(text) } },
                 onQuote = { convertFocused(state, viewModel) { text -> BlockContent.Quote(text) } },
+                onTidy = { viewModel.tidyFocusedBlock() },
                 onAddBlock = { viewModel.insertBlockAfter(state.focusedBlockId) },
             )
             }
@@ -409,6 +410,7 @@ private fun EditorToolbar(
     onBullet: () -> Unit,
     onTodo: () -> Unit,
     onQuote: () -> Unit,
+    onTidy: () -> Unit,
     onAddBlock: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -429,6 +431,7 @@ private fun EditorToolbar(
             ToolIconButton(icon = Icons.Rounded.FormatListBulleted, contentDescription = "Bullet list", isActive = activeKind == "bullet" || activeKind == "numbered", isEnabled = enabled, onClick = onBullet)
             ToolIconButton(icon = Icons.Rounded.Checklist, contentDescription = "To-do", isActive = activeKind == "todo", isEnabled = enabled, onClick = onTodo)
             ToolIconButton(icon = Icons.Rounded.FormatQuote, contentDescription = "Quote", isActive = activeKind == "quote", isEnabled = enabled, onClick = onQuote)
+            ToolTextButton(label = "Tidy", isActive = false, isEnabled = enabled, onClick = onTidy)
             Spacer(modifier = Modifier.weight(1f))
             ToolIconButton(icon = Icons.Rounded.Add, contentDescription = "Add block", isActive = false, isEnabled = enabled, onClick = onAddBlock)
         }

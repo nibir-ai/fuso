@@ -1,5 +1,6 @@
 package com.fuso.feature.settings
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -77,6 +78,8 @@ fun SettingsScreen(
         }
 
         Column(modifier = Modifier.padding(horizontal = 20.dp)) {
+            AppearanceCard(selected = state.themeMode, onSelect = viewModel::setThemeMode)
+            Spacer(modifier = Modifier.height(12.dp))
             SyncCard(state = state, onSyncNow = viewModel::syncNow)
             Spacer(modifier = Modifier.height(12.dp))
             Surface(
@@ -123,6 +126,43 @@ fun SettingsScreen(
                 }
             }
             Spacer(modifier = Modifier.height(40.dp))
+        }
+    }
+}
+
+@Composable
+private fun AppearanceCard(
+    selected: com.fuso.core.designsystem.theme.ThemeMode,
+    onSelect: (com.fuso.core.designsystem.theme.ThemeMode) -> Unit,
+) {
+    Surface(
+        shape = MaterialTheme.shapes.extraLarge,
+        color = MaterialTheme.colorScheme.surfaceContainerLowest,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Column(modifier = Modifier.padding(horizontal = 18.dp, vertical = 14.dp)) {
+            Text(
+                text = "Appearance",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            listOf(
+                com.fuso.core.designsystem.theme.ThemeMode.SYSTEM to "Follow system",
+                com.fuso.core.designsystem.theme.ThemeMode.LIGHT to "Light",
+                com.fuso.core.designsystem.theme.ThemeMode.DARK to "Dark",
+                com.fuso.core.designsystem.theme.ThemeMode.PITCH_BLACK to "Pitch black",
+            ).forEach { (mode, label) ->
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { onSelect(mode) },
+                ) {
+                    androidx.compose.material3.RadioButton(selected = selected == mode, onClick = { onSelect(mode) })
+                    Text(text = label, style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurface)
+                }
+            }
         }
     }
 }
